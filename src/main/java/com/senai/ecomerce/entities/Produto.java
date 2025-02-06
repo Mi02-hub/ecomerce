@@ -1,9 +1,17 @@
 package com.senai.ecomerce.entities;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -18,7 +26,17 @@ public class Produto {
 	private Double preco;
 	private String imgUrl;
 	
-
+	@ManyToMany
+	@JoinTable(name="tb_produtoocategoria", joinColumns = @JoinColumn (name= "produto_id"), 
+	inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+	
+    private Set<Categoria> categorias = new HashSet<>();
+	 
+	//aqui (<>) é para listar os pedidos
+	
+	@OneToMany(mappedBy = "id.produto")
+	private Set<ItemDoPedido> itens = new HashSet<>();
+    
 	public Produto() {
 		
 	}
@@ -58,6 +76,7 @@ public class Produto {
 	public Double getPreco() {
 		return preco;
 	}
+    
 
 	public void setPreco(Double preco) {
 		this.preco = preco;
@@ -70,8 +89,16 @@ public class Produto {
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
-	
-	
+
+	public Set<ItemDoPedido> getItens() {
+		return itens;
+	}
+
+    public List<Pedido> getPedido(){
+    	return itens.stream().map(x -> x.getPedido()).toList();
+    }
+
+
 	
 	
 }
